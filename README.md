@@ -18,3 +18,5 @@ Ansible – This folder has all the code to install configure Prometheus, Alert 
 
 **How to run ansible**
 ansible-playbook configure_prometheus_stack.yaml --inventory ../inventory/hosts
+
+Notes: You need to create your personal instance to run this code
