@@ -1,0 +1,6 @@
+- name: Deploy alertmanager, prometheus and grafana
+  hosts: webservers
+  roles:
+    - { role: prometheus, become : true }
+    - { role: alertmanager, become : true }
+    - { role: grafana, become : true }

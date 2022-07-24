@@ -1,0 +1,56 @@
+- name: Install grafana
+  ansible.builtin.apt:
+    deb: https://dl.grafana.com/enterprise/release/grafana-enterprise_{{ version }}_amd64.deb
+
+- name: "Grafana configuration file copy"
+  template:
+    src: "grafana.conf.j2"
+    dest: /etc/grafana/grafana.ini
+  notify: event_restart_grafana
+
+- name: "Grafana server started"
+  service:
+    name: grafana-server
+    enabled: true
+    state: started
+
+- name: Wait for port 3000 to become open on the host, don't start checking for 120 seconds
+  ansible.builtin.wait_for:
+    port: 3000
+    delay: 120
+
+- name: "Check if Grafana is accessible."
+  uri:
+    url: "{{ ipgrafana }}"
+    method: GET
+    status_code: 200
+
+- name: create prometheus datasource
+  community.grafana.grafana_datasource:
+    name: Prometheus
+    grafana_url: "{{ipgrafana}}"
+    grafana_user: "admin"
+    grafana_password: "admin"
+    ds_type: prometheus
+    ds_url: "{{ipprometheus}}"
+    access: proxy
+    tls_skip_verify: true
+    additional_json_data:
+      httpHeaderName1: "Authorization"
+    additional_secure_json_data:
+      httpHeaderValue1: "Bearer ihavenogroot"
+
+- name: "Grafana panel file copy"
+  copy:
+    src: "{{ role_path }}/templates/panel.json"
+    dest: /tmp/panel.json
+
+- name: Import Grafana dashboard
+  community.grafana.grafana_dashboard:
+    grafana_url: "{{ipgrafana}}"
+    grafana_user: "admin"
+    grafana_password: "admin"
+    state: present
+    commit_message: Updated by ansible
+    overwrite: yes
+    path: "/tmp/panel.json"

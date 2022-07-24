@@ -1,0 +1,4 @@
+version: 9.0.4
+ipgrafana: ":3000" #Insert your IP
+ipprometheus: ":9090" #Insert your IP
+#version: 5.4.3

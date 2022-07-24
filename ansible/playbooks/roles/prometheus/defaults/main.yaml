@@ -1,0 +1,9 @@
+serviceName: "prometheusservice"
+userId: "prometheususer"
+groupId: "prometheusgroup"
+exec_command: "/usr/local/bin/prometheus --config.file=/etc/prometheus/prometheus.conf --storage.tsdb.path=/data/prometheus --storage.tsdb.retention=2d"
+version: "2.37.0"
+ipprometheus: ":9090" #Insert your IP
+ipscrapetarget: [':9100'] #Insert your IP
+ipalertmanager: [':9093'] #Insert your IP
+#version: "2.3.2"
